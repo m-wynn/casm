@@ -1,0 +1,6 @@
+[package]
+name = "cacm-rs"
+version = "0.1.0"
+authors = ["Matthew Wynn <matthew@matthewwynn.com>"]
+
+[dependencies]
