@@ -1,7 +1,9 @@
 [package]
-name = "cacm-rs"
+name = "casm"
 version = "0.1.0"
 authors = ["Matthew Wynn <matthew@matthewwynn.com>"]
+description = "Convert music and sync it to another folder"
+license = "ISC"
 
 [dependencies]
 clap = "2.25.1"
