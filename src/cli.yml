@@ -1,0 +1,14 @@
+name: CASM -- Copy and Sync Music
+about: Convert music and sync it to another folder
+args:
+    - config:
+        short: c
+        long: config
+        value_name: FILE
+        help: "Sets a custom config file
+            [default: $XDG_CONFIG_HOME/casm/config.toml]"
+        takes_value: true
+    - verbose:
+        short: v
+        multiple: true
+        help: Sets the level of verbosity
