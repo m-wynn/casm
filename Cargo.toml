@@ -4,3 +4,9 @@ version = "0.1.0"
 authors = ["Matthew Wynn <matthew@matthewwynn.com>"]
 
 [dependencies]
+clap = "2.25.1"
+ffmpeg-sys = "3.2.1"
+regex = "0.2.2"
+threadpool = "1.5.0"
+toml = "0.4.4"
+xdg = "2.1.0"
