@@ -7,8 +7,11 @@ license = "ISC"
 
 [dependencies]
 clap = {version = "~2.25.1", features = ["yaml"]}
+error-chain = "0.10.0"
 ffmpeg-sys = "3.2.1"
 regex = "0.2.2"
+serde = "1.0.11"
+serde_derive = "1.0.11"
 threadpool = "1.5.0"
 toml = "0.4.4"
 xdg = "2.1.0"
