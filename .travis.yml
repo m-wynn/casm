@@ -12,9 +12,14 @@ before_install:
 addons:
   apt:
     packages:
+      - libavcodec-dev
+      - libavfilter-dev
+      - libavformat-dev
+      - libavresample-dev
       - libcurl4-openssl-dev
       - libelf-dev
       - libdw-dev
+      - libswscale-dev
       - cmake
       - gcc
       - binutils-dev
