@@ -1,1 +1,6 @@
 source_folder = "~/Music"
+dest_folder = "~/mnt/Internal Storage/Music"
+files = [
+    "Daft Punk",
+    "MAMAMOO"
+]
