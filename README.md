@@ -1,4 +1,8 @@
 [![Build Status](https://travis-ci.org/m-wynn/casm.svg?branch=master)](https://travis-ci.org/m-wynn/casm)
+[![codecov](https://codecov.io/gh/m-wynn/casm/branch/master/graph/badge.svg)](https://codecov.io/gh/m-wynn/casm)
+[![license](https://img.shields.io/badge/license-ISC-blue.svg)](https://github.com/m-wynn/casm/blob/master/LICENSE)
+[![docs](https://img.shields.io/badge/docs-m--wynn.github.io%2Fcasm-orange.svg)](https://m-wynn.github.io/casm)
+
 
 CASM
 ====
