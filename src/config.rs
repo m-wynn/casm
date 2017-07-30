@@ -5,16 +5,19 @@ use xdg::BaseDirectories;
 use toml as toml;
 pub use errors::*;
 
-#[derive(Deserialize)]
-#[derive(Debug)]
+#[derive(Deserialize, Debug, PartialEq)]
 pub struct Config {
-    source_folder: String,
-    dest_folder: String,
-    files: Vec<String>,
+    pub source_folder: String,
+    pub dest_folder: String,
+    pub files: Vec<String>,
 }
 
 impl Config {
     /// Creates a config struct
+    ///
+    /// # Arguments
+    ///
+    /// * `config_cli` - An Option that may hold the location of the configuration file
     pub fn new(config_cli: Option<&str>) -> Result<Config> {
         let config_file = match config_cli {
             Some(file) => { PathBuf::from(file) },
@@ -41,4 +44,23 @@ impl Config {
 
         Ok(config)
     }
+}
+
+#[test]
+fn invalid_config_path_err() {
+    assert!(Config::new(Some("/tmp/does_not_exist")).is_err())
+}
+
+#[test]
+fn valid_config_path() {
+
+    let correct_config = Config {
+        source_folder: "~/Music".to_owned(),
+        dest_folder: "~/mnt/Internal Storage/Music".to_owned(),
+        files: vec![
+            "Daft Punk".to_owned(),
+            "MAMAMOO".to_owned()
+        ]
+    };
+    assert_eq!(Config::new(Some("config.example.toml")).unwrap(), correct_config)
 }

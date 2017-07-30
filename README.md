@@ -23,9 +23,10 @@ Objectives
 This software should be able to:
 
 1. Read a configuration file with options on what and how to sync.
-2. Read command-line options for specifying a custom configuration file
+1. Read command-line options for specifying a custom configuration file
    location, or overriding options in the config file.
-3. Scan music in the paths I specified using some sort of globbing or regex.
-4. Determine if there is a newer valid copy in the destination.
-5. Determine if the music should be converted, or simply copied.
-6. Convert and copy in multiple threads.
+1. Scan music in the paths I specified using some sort of globbing or regex.
+1. Ignore a set of files (i.e. instrumental versions) using globbing or regex.
+1. Determine if there is a newer valid copy in the destination.
+1. Determine if the music should be converted, or simply copied.
+1. Convert and copy in multiple threads.

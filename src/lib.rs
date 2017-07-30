@@ -37,14 +37,3 @@ pub fn run() -> Result<()> {
 
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    #[should_panic]
-    fn runs_ok() {
-        run().unwrap();
-    }
-}
