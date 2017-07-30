@@ -15,11 +15,10 @@ extern crate serde_derive;
 use clap::App;
 use config::Config;
 use glob::glob;
-use musicfile::Musicfile;
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 mod config;
-mod musicfile;
 
 pub mod errors {
     // Create the Error, ErrorKind, ResultExt, and Result types
@@ -43,7 +42,7 @@ pub fn run() -> Result<()> {
         println!("Configuration:\n{:#?}", config);
     }
 
-    let files = process_files(config.files);
+    let files = process_files(config.source_folder, config.files);
 
     Ok(())
 }
@@ -53,9 +52,10 @@ pub fn run() -> Result<()> {
 /// # Arguments
 ///
 /// * `files` - An vector of folder names and/or glob patterns
-fn process_files(files: Vec<String>) -> Vec<Musicfile> {
-    let mut musicfiles = Vec::new();
+fn process_files(prefix: String, files: Vec<String>) -> HashSet<PathBuf> {
+    let mut musicfiles = HashSet::new();
     for file in files {
+        let file = prefix.to_owned() + "/" + &*file;
         for entry in glob(&*file).expect("Failed to read glob pattern") {
             match entry {
                 Ok(path) => check_file(path, &mut musicfiles),
@@ -72,26 +72,77 @@ fn process_files(files: Vec<String>) -> Vec<Musicfile> {
 ///
 /// * `file` - A PathBuf to the folder or file
 /// * `vector` - A Vec to put the Musicfile in, if it is a music file
-fn check_file(file: PathBuf, vector: &mut Vec<Musicfile>) {
-    let mut valid = false;  // Fighting the borrow checker!
+fn check_file(file: PathBuf, musicfiles: &mut HashSet<PathBuf>) {
     if file.is_dir() {
         for entry in file.read_dir().expect("read_dir call failed") {
             if let Ok(entry) = entry {
-                check_file(entry.path(), vector);
+                check_file(entry.path(), musicfiles);
             }
         }
     } else {
-        let extension = file.extension();
-        if let Some(extension) = extension {
-            let extension = extension.to_str();
-            if let Some(extension) = extension {
-                if mime_guess::get_mime_type(extension).type_() == "audio" {
-                    valid = true;
-                }
-            }
+        if mime_guess::guess_mime_type(& file).type_() == "audio" {
+            musicfiles.insert(file);
         }
     }
-    if valid {
-        vector.push(Musicfile::new(file))
-    }
+}
+
+#[test]
+fn test_process_folder() {
+    let files = vec!["folder1".to_owned()];
+    let musicfiles = process_files("test-files".to_owned(), files);
+    let should_contain = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+    assert_eq!(musicfiles.contains(&should_contain), true);
+    assert_eq!(musicfiles.len(), 1);
+}
+
+#[test]
+fn test_process_glob() {
+    let files = vec!["folder*/*Crocodile*".to_owned()];
+    let musicfiles = process_files("test-files".to_owned(), files);
+    let should_contain = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+    assert_eq!(musicfiles.contains(&should_contain), true);
+    assert_eq!(musicfiles.len(), 1);
+}
+
+#[test]
+fn test_process_filename() {
+    let files = vec!["/folder1/How Doth The Little Crocodile.mp3".to_owned()];
+    let musicfiles = process_files("test-files/".to_owned(), files);
+    let should_contain = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+    assert_eq!(musicfiles.contains(&should_contain), true);
+    assert_eq!(musicfiles.len(), 1);
+}
+
+#[test]
+fn test_process_empty() {
+    let files = vec!["folder1/*.txt".to_owned()];
+    let musicfiles = process_files("test-files".to_owned(), files);
+    assert_eq!(musicfiles.is_empty(), true);
+}
+
+#[test]
+fn test_process_nonexistant() {
+    let files = vec!["not_a_folder".to_owned()];
+    let musicfiles = process_files("test-files".to_owned(), files);
+    assert_eq!(musicfiles.is_empty(), true);
+}
+
+#[test]
+fn test_process_text_file() {
+    let files = vec!["folder2/notmusic.txt".to_owned()];
+    let musicfiles = process_files("test-files".to_owned(), files);
+    assert_eq!(musicfiles.is_empty(), true);
+}
+
+#[test]
+fn test_process_duplicates() {
+    let files = vec![
+        "folder1/How Doth The Little Crocodile.mp3".to_owned(),
+        "folder1/".to_owned(),
+        "folder1/*".to_owned()
+    ];
+    let musicfiles = process_files("test-files".to_owned(), files);
+    let should_contain = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+    assert_eq!(musicfiles.contains(&should_contain), true);
+    assert_eq!(musicfiles.len(), 1);
 }
