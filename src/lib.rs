@@ -26,6 +26,7 @@ pub struct Config {
 }
 
 impl Config {
+    /// Creates a config struct
     pub fn new() -> Result<Config> {
         let yaml = load_yaml!("cli.yml");
         let matches = App::from_yaml(yaml)
@@ -63,4 +64,15 @@ pub fn run() -> Result<()> {
     let config = Config::new()
         .chain_err(|| "Unable to read config")?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic]
+    fn runs_ok() {
+        run().unwrap();
+    }
 }
