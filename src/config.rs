@@ -53,7 +53,6 @@ fn invalid_config_path_err() {
 
 #[test]
 fn valid_config_path() {
-
     let correct_config = Config {
         source_folder: "~/Music".to_owned(),
         dest_folder: "~/mnt/Internal Storage/Music".to_owned(),
