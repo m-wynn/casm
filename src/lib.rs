@@ -44,6 +44,10 @@ pub fn run() -> Result<()> {
 
     let files = process_files(config.source_folder, config.files);
 
+    if verbose > 2 {
+        println!("Files:\n{:#?}", files);
+    }
+
     Ok(())
 }
 

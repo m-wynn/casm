@@ -1,5 +1,5 @@
-source_folder = "~/Music"
-dest_folder = "~/mnt/Internal Storage/Music"
+source_folder = "/home/matthew/Music"
+dest_folder = "/home/matthew/mnt/Internal Storage/Music"
 files = [
     "Daft Punk",
     "MAMAMOO"
