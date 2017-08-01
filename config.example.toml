@@ -1,5 +1,9 @@
 source_folder = "/home/matthew/Music"
 dest_folder = "/home/matthew/mnt/Internal Storage/Music"
+exclude = [
+    ".*[Ii]nstrument(al)?( ver(.?|sion))?(\\)|-|>)?$",
+    ".*[O|o]ff-?[V|v]ocal.*"
+]
 files = [
     "Daft Punk",
     "MAMAMOO"

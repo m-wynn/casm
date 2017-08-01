@@ -9,6 +9,7 @@ pub use errors::*;
 pub struct Config {
     pub source_folder: String,
     pub dest_folder: String,
+    pub exclude: Option<Vec<String>>,
     pub files: Vec<String>,
 }
 
@@ -54,12 +55,16 @@ fn invalid_config_path_err() {
 #[test]
 fn valid_config_path() {
     let correct_config = Config {
-        source_folder: "~/Music".to_owned(),
-        dest_folder: "~/mnt/Internal Storage/Music".to_owned(),
+        source_folder: "/home/matthew/Music".to_owned(),
+        dest_folder: "/home/matthew/mnt/Internal Storage/Music".to_owned(),
+        exclude: Some(vec![
+            ".*[Ii]nstrument(al)?( ver(.?|sion))?(\\)|-|>)?$".to_owned(),
+            ".*[O|o]ff-?[V|v]ocal.*".to_owned()
+        ]),
         files: vec![
             "Daft Punk".to_owned(),
             "MAMAMOO".to_owned()
-        ]
+        ],
     };
     assert_eq!(Config::new(Some("config.example.toml")).unwrap(), correct_config)
 }
