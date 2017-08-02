@@ -9,7 +9,7 @@ fn main() {
     }
 }
 
-fn handle_error(e: & Error ) {
+fn handle_error(e: &Error) {
     use std::io::Write;
     let stderr = &mut ::std::io::stderr();
     let errmsg = "Error writing to stderr";
