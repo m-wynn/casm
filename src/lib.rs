@@ -109,7 +109,7 @@ fn check_file(file: PathBuf,
 #[test]
 fn test_process_folder() {
     let files = vec!["folder1".to_owned()];
-    let musicfiles = process_files("test-files".to_owned(), files, None);
+    let musicfiles = process_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
@@ -119,7 +119,7 @@ fn test_process_folder() {
 #[test]
 fn test_process_glob() {
     let files = vec!["folder*/*Crocodile*".to_owned()];
-    let musicfiles = process_files("test-files".to_owned(), files, None);
+    let musicfiles = process_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
@@ -129,7 +129,7 @@ fn test_process_glob() {
 #[test]
 fn test_process_filename() {
     let files = vec!["/folder1/How Doth The Little Crocodile.mp3".to_owned()];
-    let musicfiles = process_files("test-files/".to_owned(), files, None);
+    let musicfiles = process_files("test-files/", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
@@ -139,21 +139,21 @@ fn test_process_filename() {
 #[test]
 fn test_process_empty() {
     let files = vec!["folder1/*.txt".to_owned()];
-    let musicfiles = process_files("test-files".to_owned(), files, None);
+    let musicfiles = process_files("test-files", files, &None);
     assert_eq!(musicfiles.is_empty(), true);
 }
 
 #[test]
 fn test_process_nonexistant() {
     let files = vec!["not_a_folder".to_owned()];
-    let musicfiles = process_files("test-files".to_owned(), files, None);
+    let musicfiles = process_files("test-files", files, &None);
     assert_eq!(musicfiles.is_empty(), true);
 }
 
 #[test]
 fn test_process_text_file() {
     let files = vec!["folder2/notmusic.txt".to_owned()];
-    let musicfiles = process_files("test-files".to_owned(), files, None);
+    let musicfiles = process_files("test-files", files, &None);
     assert_eq!(musicfiles.is_empty(), true);
 }
 
@@ -162,7 +162,7 @@ fn test_process_duplicates() {
     let files = vec!["folder1/How Doth The Little Crocodile.mp3".to_owned(),
                      "folder1/".to_owned(),
                      "folder1/*".to_owned()];
-    let musicfiles = process_files("test-files".to_owned(), files, None);
+    let musicfiles = process_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
