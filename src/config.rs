@@ -58,8 +58,8 @@ fn valid_config_path() {
         source_folder: "/home/matthew/Music".to_owned(),
         dest_folder: "/home/matthew/mnt/Internal Storage/Music".to_owned(),
         exclude: Some(vec![
-            ".*[Ii]nstrument(al)?( ver(.?|sion))?(\\)|-|>)?$".to_owned(),
-            ".*[O|o]ff-?[V|v]ocal.*".to_owned()
+            r".*[Ii]nstrument(al)?( ver(.?|sion))?(\)|-|>)?\.[a-zA-Z0-9]+$".to_owned(),
+            r".*[O|o]ff-?[V|v]ocal.*".to_owned()
         ]),
         files: vec![
             "Daft Punk".to_owned(),

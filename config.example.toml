@@ -1,10 +1,18 @@
+# Files will be moved from source_folder/path/to/music to
+# dest_folder/path/to/music
 source_folder = "/home/matthew/Music"
 dest_folder = "/home/matthew/mnt/Internal Storage/Music"
+
+# A regex for excluding files, for example instrumentals.
+# These must be enclosed in single quotes to avoid escaping
 exclude = [
-    ".*[Ii]nstrument(al)?( ver(.?|sion))?(\\)|-|>)?$",
-    ".*[O|o]ff-?[V|v]ocal.*"
+    '.*[Ii]nstrument(al)?( ver(.?|sion))?(\)|-|>)?\.[a-zA-Z0-9]+$',
+    '.*[O|o]ff-?[V|v]ocal.*'
 ]
+
+# A list of files, folders, and glob patterns inside source_folder
+# to copy
 files = [
     "Daft Punk",
-    "MAMAMOO"
+    "MAMAMOO",
 ]
