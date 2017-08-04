@@ -4,7 +4,7 @@ extern crate regex;
 use regex::RegexSet;
 use std::path::PathBuf;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Hash)]
 pub struct Musicfile {
     pub filename: PathBuf,
 }

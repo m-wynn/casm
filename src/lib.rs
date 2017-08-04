@@ -65,15 +65,19 @@ pub fn run() -> Result<()> {
 ///
 /// # Arguments
 ///
+/// * `prefix` - The name of the root directory in which files may be found
 /// * `files` - An vector of folder names and/or glob patterns
-fn process_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -> Vec<Musicfile> {
-    let mut musicfiles = Vec::new();
-    let mut filename_list = HashSet::new();
+/// * `exclude` - A regex to exclude
+fn process_files(prefix: &str,
+                 files: Vec<String>,
+                 exclude: &Option<RegexSet>)
+                 -> HashSet<Musicfile> {
+    let mut musicfiles = HashSet::new();
     for file in files {
         let file = prefix.to_owned() + "/" + &*file;
         for entry in glob(&*file).expect("Failed to read glob pattern") {
             match entry {
-                Ok(path) => check_file(path, &mut musicfiles, &mut filename_list, exclude),
+                Ok(path) => check_file(path, &mut musicfiles, exclude),
                 Err(e) => println!("{:?}", e),
             }
         }
@@ -86,23 +90,17 @@ fn process_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -
 /// # Arguments
 ///
 /// * `file` - A `PathBuf` to the folder or file
-/// * `vector` - A Vec to put the Musicfile in, if it is a music file
-/// * `filename_list` - A list of filenames so far
+/// * `musicfiles` - A `HashSet` to put the legitimate Musicfile in
 /// * `exclude` - An exclude pattern
-fn check_file(file: PathBuf,
-              musicfiles: &mut Vec<Musicfile>,
-              filename_list: &mut HashSet<PathBuf>,
-              exclude: &Option<RegexSet>) {
+fn check_file(file: PathBuf, musicfiles: &mut HashSet<Musicfile>, exclude: &Option<RegexSet>) {
     if file.is_dir() {
         for entry in file.read_dir().expect("read_dir call failed") {
             if let Ok(entry) = entry {
-                check_file(entry.path(), musicfiles, filename_list, exclude);
+                check_file(entry.path(), musicfiles, exclude);
             }
         }
-    } else if filename_list.insert(file.clone()) {
-        if let Some(musicfile) = Musicfile::new(file, exclude) {
-            musicfiles.push(musicfile);
-        }
+    } else if let Some(musicfile) = Musicfile::new(file, exclude) {
+        musicfiles.insert(musicfile);
     }
 }
 
