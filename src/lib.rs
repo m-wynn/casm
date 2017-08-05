@@ -1,16 +1,19 @@
 #[macro_use]
 extern crate clap;
-extern crate glob;
 #[macro_use]
 extern crate error_chain;
+extern crate ffmpeg;
+extern crate glob;
 extern crate num_cpus;
+extern crate phf;
 extern crate regex;
-extern crate threadpool;
-extern crate toml;
-extern crate xdg;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate threadpool;
+extern crate toml;
+extern crate unicase;
+extern crate xdg;
 
 use clap::App;
 use config::Config;
@@ -19,7 +22,11 @@ use musicfile::Musicfile;
 use regex::RegexSet;
 use std::collections::HashSet;
 use std::path::PathBuf;
+use unicase::UniCase;
 
+include!("codecs_generated.rs");
+
+mod codecs;
 mod config;
 mod musicfile;
 
@@ -52,11 +59,13 @@ pub fn run() -> Result<()> {
         _ => None,
     };
 
-    let files = process_files(&config.source_folder, config.files, &exclude);
+    let files = scan_files(&config.source_folder, config.files, &exclude);
 
     if verbose > 2 {
         println!("Files:\n{:#?}", files);
     }
+
+    process_files(files, &config.dest_folder);
 
     Ok(())
 }
@@ -68,10 +77,7 @@ pub fn run() -> Result<()> {
 /// * `prefix` - The name of the root directory in which files may be found
 /// * `files` - An vector of folder names and/or glob patterns
 /// * `exclude` - A regex to exclude
-fn process_files(prefix: &str,
-                 files: Vec<String>,
-                 exclude: &Option<RegexSet>)
-                 -> HashSet<Musicfile> {
+fn scan_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -> HashSet<Musicfile> {
     let mut musicfiles = HashSet::new();
     for file in files {
         let file = prefix.to_owned() + "/" + &*file;
@@ -104,10 +110,21 @@ fn check_file(file: PathBuf, musicfiles: &mut HashSet<Musicfile>, exclude: &Opti
     }
 }
 
+/// Processes each file
+fn process_files(musicfiles: HashSet<Musicfile>, prefix: &str) {
+    // Eventually this will be multithreaded, so the function is simple for now.
+    ffmpeg::init().unwrap();
+    for file in musicfiles {
+        println!("HI: {:?}", file);
+        file.process_file(prefix);
+    }
+}
+
+
 #[test]
-fn test_process_folder() {
+fn test_scan_folder() {
     let files = vec!["folder1".to_owned()];
-    let musicfiles = process_files("test-files", files, &None);
+    let musicfiles = scan_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
@@ -115,9 +132,9 @@ fn test_process_folder() {
 }
 
 #[test]
-fn test_process_glob() {
+fn test_scan_glob() {
     let files = vec!["folder*/*Crocodile*".to_owned()];
-    let musicfiles = process_files("test-files", files, &None);
+    let musicfiles = scan_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
@@ -125,9 +142,9 @@ fn test_process_glob() {
 }
 
 #[test]
-fn test_process_filename() {
+fn test_scan_filename() {
     let files = vec!["/folder1/How Doth The Little Crocodile.mp3".to_owned()];
-    let musicfiles = process_files("test-files/", files, &None);
+    let musicfiles = scan_files("test-files/", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);
@@ -135,32 +152,32 @@ fn test_process_filename() {
 }
 
 #[test]
-fn test_process_empty() {
+fn test_scan_empty() {
     let files = vec!["folder1/*.txt".to_owned()];
-    let musicfiles = process_files("test-files", files, &None);
+    let musicfiles = scan_files("test-files", files, &None);
     assert_eq!(musicfiles.is_empty(), true);
 }
 
 #[test]
-fn test_process_nonexistant() {
+fn test_scan_nonexistant() {
     let files = vec!["not_a_folder".to_owned()];
-    let musicfiles = process_files("test-files", files, &None);
+    let musicfiles = scan_files("test-files", files, &None);
     assert_eq!(musicfiles.is_empty(), true);
 }
 
 #[test]
-fn test_process_text_file() {
+fn test_scan_text_file() {
     let files = vec!["folder2/notmusic.txt".to_owned()];
-    let musicfiles = process_files("test-files", files, &None);
+    let musicfiles = scan_files("test-files", files, &None);
     assert_eq!(musicfiles.is_empty(), true);
 }
 
 #[test]
-fn test_process_duplicates() {
+fn test_scan_duplicates() {
     let files = vec!["folder1/How Doth The Little Crocodile.mp3".to_owned(),
                      "folder1/".to_owned(),
                      "folder1/*".to_owned()];
-    let musicfiles = process_files("test-files", files, &None);
+    let musicfiles = scan_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };
     assert_eq!(musicfiles.contains(&should_contain), true);

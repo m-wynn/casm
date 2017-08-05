@@ -4,17 +4,24 @@ version = "0.1.0"
 authors = ["Matthew Wynn <matthew@matthewwynn.com>"]
 description = "Convert music and sync it to another folder"
 license = "ISC"
+build = "src/gen_codec_types.rs"
 
 [dependencies]
 clap = {version = "~2.25.1", features = ["yaml"]}
 error-chain = "0.10.0"
-ffmpeg-sys = "3.2.1"
+ffmpeg = "0.2.0-alpha.1"
 glob = "0.2.11"
-mime_guess = "2.0.0-alpha.1"
+mime_guess = "2.0.0-alpha.2"
 num_cpus = "1.6.2"
+phf = { version = "0.7.21", features = ["unicase"] }
 regex = "0.2.2"
 serde = "1.0.11"
 serde_derive = "1.0.11"
 threadpool = "1.5.0"
 toml = "0.4.4"
+unicase = "1.1"
 xdg = "2.1.0"
+
+[build-dependencies]
+phf_codegen = "0.7"
+unicase = "1.1"

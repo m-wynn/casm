@@ -1,8 +1,13 @@
+extern crate ffmpeg;
 extern crate mime_guess;
+extern crate phf;
+extern crate unicase;
 extern crate regex;
 
 use regex::RegexSet;
 use std::path::PathBuf;
+use unicase::UniCase;
+use ffmpeg::codec::id::Id;
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct Musicfile {
@@ -20,6 +25,29 @@ impl Musicfile {
             return Some(Musicfile { filename: filename });
         }
         None
+    }
+
+    pub fn process_file(&self, prefix: &str) {
+        // TODO: return an actual error to the parent process
+        // But this will need to be reimplemented for multithreaded anyways
+        let codec = self.get_codec().unwrap();
+        println!("Processing: {} with codec {:?}",
+                 self.filename.to_str().unwrap(),
+                 codec);
+        println!("{:#?}", ::ALL_CODECS.get(&UniCase(codec.name())));
+    }
+
+    fn get_codec(&self) -> Option<Id> {
+        match ffmpeg::format::input(&self.filename) {
+            Ok(context) => {
+                if let Some(stream) = context.streams().best(ffmpeg::media::Type::Audio) {
+                    Some(stream.codec().id())
+                } else {
+                    None
+                }
+            }
+            Err(_) => None,
+        }
     }
 }
 

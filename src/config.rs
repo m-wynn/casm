@@ -11,7 +11,16 @@ pub struct Config {
     pub dest_folder: String,
     pub exclude: Option<Vec<String>>,
     pub files: Vec<String>,
+    pub convert_profile: ConvertProfile,
 }
+
+// Conversion options
+#[derive(Deserialize, Debug, PartialEq)]
+pub struct ConvertProfile {
+    pub target_format: String,
+    pub acceptable_formats: Vec<String>,
+}
+
 
 impl Config {
     /// Creates a config struct
@@ -58,7 +67,11 @@ fn valid_config_path() {
         exclude: Some(vec![r".*[Ii]nstrument(al)?( ver(.?|sion))?(\)|-|>)?\.[a-zA-Z0-9]+$"
                                .to_owned(),
                            r".*[O|o]ff-?[V|v]ocal.*".to_owned()]),
-        files: vec!["Daft Punk".to_owned(), "MAMAMOO".to_owned()],
+        files: vec!["BLACKPINK".to_owned(), "MAMAMOO".to_owned()],
+        convert_profile: ConvertProfile {
+            target_format: "OPUS".to_owned(),
+            acceptable_formats: vec!["quality:lossy".to_owned()],
+        },
     };
     assert_eq!(Config::new(Some("config.example.toml")).unwrap(),
                correct_config)
