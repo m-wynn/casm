@@ -26,7 +26,7 @@ use unicase::UniCase;
 
 include!("codecs_generated.rs");
 
-mod codecs;
+mod codec;
 mod config;
 mod musicfile;
 
@@ -115,7 +115,6 @@ fn process_files(musicfiles: HashSet<Musicfile>, prefix: &str) {
     // Eventually this will be multithreaded, so the function is simple for now.
     ffmpeg::init().unwrap();
     for file in musicfiles {
-        println!("HI: {:?}", file);
         file.process_file(prefix);
     }
 }
