@@ -11,19 +11,19 @@ before_install:
 
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:jonathonf/ffmpeg-3'
     packages:
       - binutils-dev
       - cmake
       - gcc
+      - libavutil-dev
       - libavcodec-dev
-      - libavfilter-dev
       - libavformat-dev
-      - libavresample-dev
-      - libiberty-dev
       - libcurl4-openssl-dev
       - libdw-dev
       - libelf-dev
-      - libswscale-dev
+      - libiberty-dev
 
 # Run builds for all the supported trains
 rust:

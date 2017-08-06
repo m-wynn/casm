@@ -9,7 +9,6 @@ build = "src/gen_codec_types.rs"
 [dependencies]
 clap = {version = "~2.25.1", features = ["yaml"]}
 error-chain = "0.10.0"
-ffmpeg = "0.2.0-alpha.1"
 glob = "0.2.11"
 mime_guess = "2.0.0-alpha.2"
 num_cpus = "1.6.2"
@@ -21,6 +20,11 @@ threadpool = "1.5.0"
 toml = "0.4.4"
 unicase = "1.1"
 xdg = "2.1.0"
+
+[dependencies.ffmpeg]
+version = "0.2.0-alpha.1"
+default-features = false
+features = ["codec", "format"]
 
 [build-dependencies]
 phf_codegen = "0.7"
