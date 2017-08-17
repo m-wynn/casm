@@ -65,7 +65,7 @@ pub fn run() -> Result<()> {
         println!("Files:\n{:#?}", files);
     }
 
-    process_files(files, &config.dest_folder);
+    process_files(files, &config.dest_folder, &config.convert_profile);
 
     Ok(())
 }
@@ -111,11 +111,13 @@ fn check_file(file: PathBuf, musicfiles: &mut HashSet<Musicfile>, exclude: &Opti
 }
 
 /// Processes each file
-fn process_files(musicfiles: HashSet<Musicfile>, prefix: &str) {
+fn process_files(musicfiles: HashSet<Musicfile>,
+                 prefix: &str,
+                 convert_profile: &config::ConvertProfile) {
     // Eventually this will be multithreaded, so the function is simple for now.
     ffmpeg::init().unwrap();
     for file in musicfiles {
-        file.process_file(prefix);
+        file.process_file(prefix, convert_profile);
     }
 }
 

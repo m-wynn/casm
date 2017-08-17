@@ -4,6 +4,7 @@ extern crate phf;
 extern crate unicase;
 extern crate regex;
 
+use config;
 use regex::RegexSet;
 use std::path::PathBuf;
 use unicase::UniCase;
@@ -27,14 +28,20 @@ impl Musicfile {
         None
     }
 
-    pub fn process_file(&self, prefix: &str) {
+    pub fn process_file(&self, prefix: &str, convert_profile: &config::ConvertProfile) {
         // TODO: return an actual error to the parent process
         // But this will need to be reimplemented for multithreaded anyways
         let codec = self.get_codec().unwrap();
         println!("Processing: {} with codec {:?}",
                  self.filename.to_str().unwrap(),
                  codec);
-        println!("{:#?}", ::ALL_CODECS.get(&UniCase(codec.name())));
+        if let Some(codec_info) = ::ALL_CODECS.get(&UniCase(codec.name())) {
+            if codec_info.is_acceptable(&convert_profile.acceptable_formats) {
+                // Just copy
+            } else {
+                // Convert
+            }
+        }
     }
 
     fn get_codec(&self) -> Option<Id> {
@@ -73,4 +80,14 @@ fn test_no_exclude() {
     let exclude = None;
     let expected_musicfile = Musicfile { filename: filename.clone() };
     assert_eq!(Musicfile::new(filename, &exclude), Some(expected_musicfile));
+}
+
+#[test]
+fn test_get_codec() {
+    ffmpeg::init().unwrap();
+    let musicfile = Musicfile {
+        filename: PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3"),
+    };
+    let expected_codec = ffmpeg::codec::Id::MP3;
+    assert_eq!(musicfile.get_codec(), Some(expected_codec));
 }
