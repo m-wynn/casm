@@ -6,12 +6,9 @@ pub struct Codec<'a> {
 }
 
 impl<'a> Codec<'a> {
-    pub fn is_acceptable(&self, acceptable_formats: &Vec<String>) -> bool {
+    pub fn is_acceptable(&self, acceptable_formats: &[String]) -> bool {
         let quality = format!("quality:{}",
-                              match self.lossless {
-                                  true => "lossless",
-                                  _ => "lossy",
-                              });
+                              if self.lossless { "lossless" } else { "lossy" });
         acceptable_formats.contains(&self.name.to_string()) ||
         acceptable_formats.contains(&quality.to_string())
     }

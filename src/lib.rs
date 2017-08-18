@@ -13,6 +13,7 @@ extern crate serde_derive;
 extern crate threadpool;
 extern crate toml;
 extern crate unicase;
+extern crate walkdir;
 extern crate xdg;
 
 use clap::App;
@@ -23,6 +24,7 @@ use regex::RegexSet;
 use std::collections::HashSet;
 use std::path::PathBuf;
 use unicase::UniCase;
+use walkdir::WalkDir;
 
 include!("codecs_generated.rs");
 
@@ -99,14 +101,10 @@ fn scan_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -> H
 /// * `musicfiles` - A `HashSet` to put the legitimate Musicfile in
 /// * `exclude` - An exclude pattern
 fn check_file(file: PathBuf, musicfiles: &mut HashSet<Musicfile>, exclude: &Option<RegexSet>) {
-    if file.is_dir() {
-        for entry in file.read_dir().expect("read_dir call failed") {
-            if let Ok(entry) = entry {
-                check_file(entry.path(), musicfiles, exclude);
-            }
+    for entry in WalkDir::new(file).into_iter().filter_map(|e| e.ok()) {
+        if let Some(musicfile) = Musicfile::new(entry.path().to_path_buf(), exclude) {
+            musicfiles.insert(musicfile);
         }
-    } else if let Some(musicfile) = Musicfile::new(file, exclude) {
-        musicfiles.insert(musicfile);
     }
 }
 
