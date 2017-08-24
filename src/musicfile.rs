@@ -4,11 +4,15 @@ extern crate phf;
 extern crate unicase;
 extern crate regex;
 
+pub use errors::*;
+
 use config;
+use ffmpeg::codec;
 use regex::RegexSet;
+use std::fs;
 use std::path::PathBuf;
+use transcoder;
 use unicase::UniCase;
-use ffmpeg::codec::id::Id;
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct Musicfile {
@@ -19,7 +23,7 @@ impl Musicfile {
     pub fn new(filename: PathBuf, exclude: &Option<RegexSet>) -> Option<Musicfile> {
         if mime_guess::guess_mime_type(&filename).type_() == "audio" {
             if let Some(ref exclude) = *exclude {
-                if exclude.is_match(filename.to_str().unwrap()) {
+                if exclude.is_match(filename.to_str().unwrap_or("")) {
                     return None;
                 }
             }
@@ -28,23 +32,55 @@ impl Musicfile {
         None
     }
 
-    pub fn process_file(&self, prefix: &str, convert_profile: &config::ConvertProfile) {
-        // TODO: return an actual error to the parent process
-        // But this will need to be reimplemented for multithreaded anyways
-        let codec = self.get_codec().unwrap();
-        println!("Processing: {} with codec {:?}",
-                 self.filename.to_str().unwrap(),
-                 codec);
-        if let Some(codec_info) = ::ALL_CODECS.get(&UniCase(codec.name())) {
-            if codec_info.is_acceptable(&convert_profile.acceptable_formats) {
-                // Just copy
-            } else {
-                // Convert
+    pub fn process_file(
+        &self,
+        src: &str,
+        dest: &str,
+        convert_profile: &config::ConvertProfile,
+    ) -> Result<()> {
+        let codec = self.get_codec().ok_or("Failed to get codec")?;
+        let codec_info = ::ALL_CODECS.get(&UniCase(codec.name())).ok_or(
+            "Not an acceptable music file",
+        )?;
+        // This transmute should be safe as `get` will not store the reference with
+        // the expanded lifetime. This is due to `Borrow` being overly strict and
+        // can't have an impl for `&'static str` to `Borrow<&'a str>`.
+        let key: &str = &convert_profile.target_format.to_string();
+        let key = unsafe { ::std::mem::transmute::<_, &'static str>(key) };
+        let target_codec = ::ALL_CODECS.get(&UniCase(key)).ok_or(
+            "Not an acceptable target format",
+        )?;
+        let dest_prefix = PathBuf::from(dest).join(self.filename.strip_prefix(src).chain_err(
+            || "Could not strip prefix from filename",
+        )?);
+        fs::create_dir_all(&dest_prefix.parent().ok_or(
+            "Cannot get parent of root or prefix",
+        )?).chain_err(|| "Could not create destination")?;
+        if codec_info.is_acceptable(&convert_profile.acceptable_formats) {
+            let dest = dest_prefix.with_extension(codec_info.extension);
+            if self.should_write(&dest) {
+                fs::copy(&self.filename, dest).chain_err(
+                    || "Could not copy file",
+                )?;
             }
+        } else {
+            let dest = dest_prefix.with_extension(target_codec.extension);
+            println!(
+                "Converting: {} -> {}",
+                self.filename.to_str().unwrap(),
+                dest.to_str().unwrap()
+            );
+            ffmpeg::init().unwrap();
+            transcoder::convert(
+                self.filename.to_str().ok_or("Invalid filename")?,
+                dest.to_str().ok_or("Invalid destination")?,
+                "anull",
+            );
         }
+        Ok(())
     }
 
-    fn get_codec(&self) -> Option<Id> {
+    fn get_codec(&self) -> Option<codec::id::Id> {
         match ffmpeg::format::input(&self.filename) {
             Ok(context) => {
                 if let Some(stream) = context.streams().best(ffmpeg::media::Type::Audio) {
@@ -55,6 +91,11 @@ impl Musicfile {
             }
             Err(_) => None,
         }
+    }
+
+    fn should_write(&self, dest: &PathBuf) -> bool {
+        //TODO: Compare timestamps
+        !dest.exists()
     }
 }
 

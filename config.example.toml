@@ -20,7 +20,7 @@ files = [
 [convert_profile]
 # A target format for files not in acceptable_formats
 # Must be one of ffmpeg::codec::id::Id
-target_format = "OPUS"
+target_format = "MP3"
 
 # Formats that will not undergo conversion.
 # i.e. you may only want to convert lossless files to target_format,

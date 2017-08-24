@@ -20,18 +20,23 @@ fn main() {
 }
 
 fn build_map<W: Write>(out: &mut W) {
-    write!(out,
-           "static ALL_CODECS: phf::Map<UniCase<&'static str>, codec::Codec> = ")
-        .unwrap();
+    write!(
+        out,
+        "static ALL_CODECS: phf::Map<UniCase<&'static str>, codec::Codec> = "
+    ).unwrap();
     let mut forward_map = PhfMap::new();
 
     for &(name, lossless, extension) in ALL_CODECS {
-        forward_map.entry(UniCase(name),
-                          &format!("codec::Codec{{ name: \"{}\", lossless: {}, extension: \
+        forward_map.entry(
+            UniCase(name),
+            &format!(
+                "codec::Codec{{ name: \"{}\", lossless: {}, extension: \
                                     \"{}\"}}",
-                                   name,
-                                   lossless,
-                                   extension));
+                name,
+                lossless,
+                extension
+            ),
+        );
     }
 
     forward_map.build(out).unwrap();

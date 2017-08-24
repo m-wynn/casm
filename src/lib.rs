@@ -22,7 +22,6 @@ use glob::glob;
 use musicfile::Musicfile;
 use regex::RegexSet;
 use std::collections::HashSet;
-use std::path::PathBuf;
 use unicase::UniCase;
 use walkdir::WalkDir;
 
@@ -31,6 +30,7 @@ include!("codecs_generated.rs");
 mod codec;
 mod config;
 mod musicfile;
+mod transcoder;
 
 #[allow(unknown_lints)]
 #[allow(unused_doc_comment)]
@@ -46,7 +46,9 @@ pub fn run() -> Result<()> {
         .author(crate_authors!())
         .version(crate_version!())
         .get_matches();
-    let config = Config::new(matches.value_of("config")).chain_err(|| "Unable to read config")?;
+    let config = Config::new(matches.value_of("config")).chain_err(
+        || "Unable to read config",
+    )?;
 
     let verbose = matches.occurrences_of("verbose");
 
@@ -56,7 +58,9 @@ pub fn run() -> Result<()> {
 
     let exclude = match config.exclude {
         Some(exclude_pattern) => {
-            Some(RegexSet::new(exclude_pattern).chain_err(|| "Config exclude is not valid regex")?)
+            Some(RegexSet::new(exclude_pattern).chain_err(
+                || "Config exclude is not valid regex",
+            )?)
         }
         _ => None,
     };
@@ -67,7 +71,12 @@ pub fn run() -> Result<()> {
         println!("Files:\n{:#?}", files);
     }
 
-    process_files(files, &config.dest_folder, &config.convert_profile);
+    process_files(
+        files,
+        &config.source_folder,
+        &config.dest_folder,
+        &config.convert_profile,
+    );
 
     Ok(())
 }
@@ -85,7 +94,17 @@ fn scan_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -> H
         let file = prefix.to_owned() + "/" + &*file;
         for entry in glob(&*file).expect("Failed to read glob pattern") {
             match entry {
-                Ok(path) => check_file(path, &mut musicfiles, exclude),
+                Ok(path) => {
+                    for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
+                        if let Some(musicfile) = Musicfile::new(
+                            entry.path().to_path_buf(),
+                            exclude,
+                        )
+                        {
+                            musicfiles.insert(musicfile);
+                        }
+                    }
+                }
                 Err(e) => println!("{:?}", e),
             }
         }
@@ -93,29 +112,38 @@ fn scan_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -> H
     musicfiles
 }
 
-/// Checks a file to see if it is a folder, a music file, or something else
-///
-/// # Arguments
-///
-/// * `file` - A `PathBuf` to the folder or file
-/// * `musicfiles` - A `HashSet` to put the legitimate Musicfile in
-/// * `exclude` - An exclude pattern
-fn check_file(file: PathBuf, musicfiles: &mut HashSet<Musicfile>, exclude: &Option<RegexSet>) {
-    for entry in WalkDir::new(file).into_iter().filter_map(|e| e.ok()) {
-        if let Some(musicfile) = Musicfile::new(entry.path().to_path_buf(), exclude) {
-            musicfiles.insert(musicfile);
-        }
-    }
-}
-
 /// Processes each file
-fn process_files(musicfiles: HashSet<Musicfile>,
-                 prefix: &str,
-                 convert_profile: &config::ConvertProfile) {
+fn process_files(
+    musicfiles: HashSet<Musicfile>,
+    source_folder: &str,
+    dest_folder: &str,
+    convert_profile: &config::ConvertProfile,
+) {
     // Eventually this will be multithreaded, so the function is simple for now.
     ffmpeg::init().unwrap();
     for file in musicfiles {
-        file.process_file(prefix, convert_profile);
+        if let Err(ref e) = file.process_file(source_folder, dest_folder, convert_profile) {
+
+            use std::io::Write;
+            let stderr = &mut ::std::io::stderr();
+            let errmsg = "Error writing to stderr";
+            writeln!(
+                stderr,
+                "error processing {}: {}",
+                file.filename.to_str().unwrap_or("invalid filename"),
+                e
+            ).expect(errmsg);
+
+            for e in e.iter().skip(1) {
+                writeln!(stderr, "\tcaused by: {}", e).expect(errmsg);
+            }
+
+            // The backtrace is not always generated. Try to run this example
+            // with `RUST_BACKTRACE=1`.
+            if let Some(backtrace) = e.backtrace() {
+                writeln!(stderr, "backtrace: {:?}", backtrace).expect(errmsg);
+            }
+        }
     }
 }
 
@@ -173,9 +201,11 @@ fn test_scan_text_file() {
 
 #[test]
 fn test_scan_duplicates() {
-    let files = vec!["folder1/How Doth The Little Crocodile.mp3".to_owned(),
-                     "folder1/".to_owned(),
-                     "folder1/*".to_owned()];
+    let files = vec![
+        "folder1/How Doth The Little Crocodile.mp3".to_owned(),
+        "folder1/".to_owned(),
+        "folder1/*".to_owned(),
+    ];
     let musicfiles = scan_files("test-files", files, &None);
     let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
     let should_contain = Musicfile { filename: filename };

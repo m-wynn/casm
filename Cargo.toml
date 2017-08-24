@@ -23,9 +23,8 @@ walkdir = "1.0.7"
 xdg = "2.1.0"
 
 [dependencies.ffmpeg]
-version = "0.2.0-alpha.1"
-default-features = false
-features = ["codec", "format"]
+git = "https://github.com/meh/rust-ffmpeg"
+rev = "b67e4eb"
 
 [build-dependencies]
 phf_codegen = "0.7"

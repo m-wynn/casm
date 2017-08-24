@@ -1,16 +1,20 @@
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Codec<'a> {
     pub name: &'a str,
     pub lossless: bool,
     pub extension: &'a str,
 }
 
+#[allow(dead_code)]
 impl<'a> Codec<'a> {
     pub fn is_acceptable(&self, acceptable_formats: &[String]) -> bool {
-        let quality = format!("quality:{}",
-                              if self.lossless { "lossless" } else { "lossy" });
+        let quality = format!(
+            "quality:{}",
+            if self.lossless { "lossless" } else { "lossy" }
+        );
         acceptable_formats.contains(&self.name.to_string()) ||
-        acceptable_formats.contains(&quality.to_string())
+            acceptable_formats.contains(&quality.to_string())
     }
 }
 
@@ -21,8 +25,11 @@ fn test_acceptable_name() {
         lossless: false,
         extension: "opus",
     };
-    let acceptable_formats =
-        vec!["OPUS".to_owned(), "MP3".to_owned(), "quality:lossless".to_owned()];
+    let acceptable_formats = vec![
+        "OPUS".to_owned(),
+        "MP3".to_owned(),
+        "quality:lossless".to_owned(),
+    ];
     assert_eq!(codec.is_acceptable(&acceptable_formats), true)
 }
 
@@ -33,8 +40,11 @@ fn test_unacceptable_name() {
         lossless: false,
         extension: "opus",
     };
-    let acceptable_formats =
-        vec!["VORBIS".to_owned(), "MP3".to_owned(), "quality:lossless".to_owned()];
+    let acceptable_formats = vec![
+        "VORBIS".to_owned(),
+        "MP3".to_owned(),
+        "quality:lossless".to_owned(),
+    ];
     assert_eq!(codec.is_acceptable(&acceptable_formats), false)
 }
 
@@ -45,8 +55,11 @@ fn test_acceptable_type() {
         lossless: false,
         extension: "opus",
     };
-    let acceptable_formats =
-        vec!["VORBIS".to_owned(), "MP3".to_owned(), "quality:lossy".to_owned()];
+    let acceptable_formats = vec![
+        "VORBIS".to_owned(),
+        "MP3".to_owned(),
+        "quality:lossy".to_owned(),
+    ];
     assert_eq!(codec.is_acceptable(&acceptable_formats), true)
 }
 
@@ -57,7 +70,10 @@ fn test_unacceptable_type() {
         lossless: false,
         extension: "opus",
     };
-    let acceptable_formats =
-        vec!["VORBIS".to_owned(), "MP3".to_owned(), "quality:lossless".to_owned()];
+    let acceptable_formats = vec![
+        "VORBIS".to_owned(),
+        "MP3".to_owned(),
+        "quality:lossless".to_owned(),
+    ];
     assert_eq!(codec.is_acceptable(&acceptable_formats), false)
 }
