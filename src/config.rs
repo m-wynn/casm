@@ -19,6 +19,7 @@ pub struct Config {
 pub struct ConvertProfile {
     pub target_format: String,
     pub acceptable_formats: Vec<String>,
+    pub bit_rate: usize,
 }
 
 

@@ -61,6 +61,7 @@ fn transcoder<P: AsRef<Path>>(
     octx: &mut format::context::Output,
     path: &P,
     filter_spec: &str,
+    bit_rate: usize,
 ) -> Result<Transcoder, ffmpeg::Error> {
     let input = ictx.streams().best(media::Type::Audio).expect(
         "could not find best audio stream",
@@ -99,8 +100,7 @@ fn transcoder<P: AsRef<Path>>(
             .next()
             .unwrap(),
     );
-    encoder.set_bit_rate(decoder.bit_rate());
-    encoder.set_max_bit_rate(decoder.max_bit_rate());
+    encoder.set_bit_rate(bit_rate);
 
     encoder.set_time_base((1, decoder.rate() as i32));
     output.set_time_base((1, decoder.rate() as i32));
@@ -118,12 +118,12 @@ fn transcoder<P: AsRef<Path>>(
     })
 }
 
-pub fn convert(input: &str, output: &str, filter: &str) {
+pub fn convert(input: &str, output: &str, filter: &str, bit_rate: usize) {
     ffmpeg::init().unwrap();
 
     let mut ictx = format::input(&input).unwrap();
     let mut octx = format::output(&output).unwrap();
-    let mut transcoder = transcoder(&mut ictx, &mut octx, &output, filter).unwrap();
+    let mut transcoder = transcoder(&mut ictx, &mut octx, &output, filter, bit_rate).unwrap();
 
     octx.set_metadata(ictx.metadata().to_owned());
     octx.write_header().unwrap();

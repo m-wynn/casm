@@ -3,14 +3,15 @@ extern crate clap;
 #[macro_use]
 extern crate error_chain;
 extern crate ffmpeg;
+extern crate gag;
 extern crate glob;
-extern crate num_cpus;
 extern crate phf;
+extern crate pbr;
 extern crate regex;
 extern crate serde;
+extern crate scoped_threadpool;
 #[macro_use]
 extern crate serde_derive;
-extern crate threadpool;
 extern crate toml;
 extern crate unicase;
 extern crate walkdir;
@@ -20,8 +21,12 @@ use clap::App;
 use config::Config;
 use glob::glob;
 use musicfile::Musicfile;
+use pbr::{ProgressBar, MultiBar};
 use regex::RegexSet;
+use scoped_threadpool::Pool;
 use std::collections::HashSet;
+use std::sync::Arc;
+use std::sync::Mutex;
 use unicase::UniCase;
 use walkdir::WalkDir;
 
@@ -119,32 +124,45 @@ fn process_files(
     dest_folder: &str,
     convert_profile: &config::ConvertProfile,
 ) {
-    // Eventually this will be multithreaded, so the function is simple for now.
-    ffmpeg::init().unwrap();
-    for file in musicfiles {
-        if let Err(ref e) = file.process_file(source_folder, dest_folder, convert_profile) {
+    let mut pool = Pool::new(4);
 
-            use std::io::Write;
-            let stderr = &mut ::std::io::stderr();
-            let errmsg = "Error writing to stderr";
-            writeln!(
-                stderr,
-                "error processing {}: {}",
-                file.filename.to_str().unwrap_or("invalid filename"),
-                e
-            ).expect(errmsg);
 
-            for e in e.iter().skip(1) {
-                writeln!(stderr, "\tcaused by: {}", e).expect(errmsg);
-            }
+    let mut pb = ProgressBar::new(musicfiles.len() as u64);
+    pb.tick_format("▏▎▍▌▋▊▉██▉▊▋▌▍▎▏");
+    pb.show_message = true;
+    let pb = Arc::new(Mutex::new(pb));
 
-            // The backtrace is not always generated. Try to run this example
-            // with `RUST_BACKTRACE=1`.
-            if let Some(backtrace) = e.backtrace() {
-                writeln!(stderr, "backtrace: {:?}", backtrace).expect(errmsg);
-            }
+    pool.scoped(|scope| {
+        println!("hi");
+        for file in musicfiles {
+            let pb = pb.clone();
+            scope.execute(move || {
+                if let Err(ref e) = file.process_file(source_folder, dest_folder, convert_profile) {
+                    use std::io::Write;
+                    let stderr = &mut ::std::io::stderr();
+                    let errmsg = "Error writing to stderr";
+                    writeln!(
+                        stderr,
+                        "error processing {}: {}",
+                        file.filename.to_str().unwrap_or("invalid filename"),
+                        e
+                    ).expect(errmsg);
+
+                    for e in e.iter().skip(1) {
+                        writeln!(stderr, "\tcaused by: {}", e).expect(errmsg);
+                    }
+
+                    // The backtrace is not always generated. Try to run this example
+                    // with `RUST_BACKTRACE=1`.
+                    if let Some(backtrace) = e.backtrace() {
+                        writeln!(stderr, "backtrace: {:?}", backtrace).expect(errmsg);
+                    }
+                }
+                pb.lock().unwrap().inc();
+            });
         }
-    }
+    });
+    pb.lock().unwrap().finish_print("Pull complete");
 }
 
 

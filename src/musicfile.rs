@@ -1,13 +1,11 @@
 extern crate ffmpeg;
 extern crate mime_guess;
-extern crate phf;
-extern crate unicase;
-extern crate regex;
 
 pub use errors::*;
 
 use config;
 use ffmpeg::codec;
+use gag::Gag;
 use regex::RegexSet;
 use std::fs;
 use std::path::PathBuf;
@@ -65,22 +63,24 @@ impl Musicfile {
             }
         } else {
             let dest = dest_prefix.with_extension(target_codec.extension);
-            println!(
-                "Converting: {} -> {}",
-                self.filename.to_str().unwrap(),
-                dest.to_str().unwrap()
-            );
+            // ffmpeg likes writing things to stderr
+            #[allow(unused)]
+            let gag_stderr = Gag::stderr().unwrap();
             ffmpeg::init().unwrap();
             transcoder::convert(
                 self.filename.to_str().ok_or("Invalid filename")?,
                 dest.to_str().ok_or("Invalid destination")?,
                 "anull",
+                convert_profile.bit_rate * 1024,
             );
         }
         Ok(())
     }
 
     fn get_codec(&self) -> Option<codec::id::Id> {
+        #[allow(unused)]
+        let gag_stderr = Gag::stderr().unwrap();
+        ffmpeg::init().unwrap();
         match ffmpeg::format::input(&self.filename) {
             Ok(context) => {
                 if let Some(stream) = context.streams().best(ffmpeg::media::Type::Audio) {

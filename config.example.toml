@@ -31,3 +31,6 @@ target_format = "MP3"
 acceptable_formats = [
     "quality:lossy"
 ]
+
+# Bitrate in kbps.  Should probably be 128 or 320 for most cases
+bit_rate = 320
