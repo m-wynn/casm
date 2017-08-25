@@ -133,10 +133,15 @@ fn process_files(
     let pb = Arc::new(Mutex::new(pb));
 
     pool.scoped(|scope| {
-        println!("hi");
         for file in musicfiles {
             let pb = pb.clone();
             scope.execute(move || {
+                pb.lock().unwrap().message(&format!(
+                    "Processing {}: ",
+                    file.filename.file_name().unwrap().to_str().unwrap_or(
+                        "invalid filename",
+                    )
+                ));
                 if let Err(ref e) = file.process_file(source_folder, dest_folder, convert_profile) {
                     use std::io::Write;
                     let stderr = &mut ::std::io::stderr();
