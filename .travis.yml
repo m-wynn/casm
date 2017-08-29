@@ -19,6 +19,8 @@ addons:
       - gcc
       - libavutil-dev
       - libavcodec-dev
+      - libavdevice-dev
+      - libavfilter-dev
       - libavformat-dev
       - libcurl4-openssl-dev
       - libdw-dev

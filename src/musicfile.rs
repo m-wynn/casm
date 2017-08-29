@@ -65,7 +65,7 @@ impl Musicfile {
             let dest = dest_prefix.with_extension(target_codec.extension);
             // ffmpeg likes writing things to stderr
             #[allow(unused)]
-            let gag_stderr = Gag::stderr().unwrap();
+            let _gag_stderr = Gag::stderr().unwrap();
             ffmpeg::init().unwrap();
             transcoder::convert(
                 self.filename.to_str().ok_or("Invalid filename")?,
@@ -79,7 +79,7 @@ impl Musicfile {
 
     fn get_codec(&self) -> Option<codec::id::Id> {
         #[allow(unused)]
-        let gag_stderr = Gag::stderr().unwrap();
+        let _gag_stderr = Gag::stderr().unwrap();
         ffmpeg::init().unwrap();
         match ffmpeg::format::input(&self.filename) {
             Ok(context) => {
@@ -99,36 +99,43 @@ impl Musicfile {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use ffmpeg;
+    use regex::RegexSet;
+    use super::Musicfile;
+    use std::path::PathBuf;
 
-#[test]
-fn test_matches_exclude() {
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let exclude = Some(RegexSet::new(&[r"^.*Crocodile\.mp3$"]).unwrap());
-    assert_eq!(Musicfile::new(filename, &exclude), None);
-}
+    #[test]
+    fn test_matches_exclude() {
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let exclude = Some(RegexSet::new(&[r"^.*Crocodile\.mp3$"]).unwrap());
+        assert_eq!(Musicfile::new(filename, &exclude), None);
+    }
 
-#[test]
-fn test_not_matches_exclude() {
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let exclude = Some(RegexSet::new(&[r"^.*Alligator\.mp3$"]).unwrap());
-    let expected_musicfile = Musicfile { filename: filename.clone() };
-    assert_eq!(Musicfile::new(filename, &exclude), Some(expected_musicfile));
-}
+    #[test]
+    fn test_not_matches_exclude() {
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let exclude = Some(RegexSet::new(&[r"^.*Alligator\.mp3$"]).unwrap());
+        let expected_musicfile = Musicfile { filename: filename.clone() };
+        assert_eq!(Musicfile::new(filename, &exclude), Some(expected_musicfile));
+    }
 
-#[test]
-fn test_no_exclude() {
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let exclude = None;
-    let expected_musicfile = Musicfile { filename: filename.clone() };
-    assert_eq!(Musicfile::new(filename, &exclude), Some(expected_musicfile));
-}
+    #[test]
+    fn test_no_exclude() {
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let exclude = None;
+        let expected_musicfile = Musicfile { filename: filename.clone() };
+        assert_eq!(Musicfile::new(filename, &exclude), Some(expected_musicfile));
+    }
 
-#[test]
-fn test_get_codec() {
-    ffmpeg::init().unwrap();
-    let musicfile = Musicfile {
-        filename: PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3"),
-    };
-    let expected_codec = ffmpeg::codec::Id::MP3;
-    assert_eq!(musicfile.get_codec(), Some(expected_codec));
+    #[test]
+    fn test_get_codec() {
+        ffmpeg::init().unwrap();
+        let musicfile = Musicfile {
+            filename: PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3"),
+        };
+        let expected_codec = ffmpeg::codec::Id::MP3;
+        assert_eq!(musicfile.get_codec(), Some(expected_codec));
+    }
 }

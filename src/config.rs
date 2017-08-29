@@ -61,28 +61,34 @@ impl Config {
     }
 }
 
-#[test]
-fn invalid_config_path_err() {
-    assert!(Config::new(Some("/tmp/does_not_exist")).is_err())
-}
+#[cfg(test)]
+mod tests {
+    use super::{Config, ConvertProfile};
 
-#[test]
-fn valid_config_path() {
-    let correct_config = Config {
-        source_folder: "/home/matthew/Music".to_owned(),
-        dest_folder: "/home/matthew/mnt/Internal Storage/Music".to_owned(),
-        exclude: Some(vec![
+    #[test]
+    fn invalid_config_path_err() {
+        assert!(Config::new(Some("/tmp/does_not_exist")).is_err())
+    }
+
+    #[test]
+    fn valid_config_path() {
+        let correct_config = Config {
+            source_folder: "/home/matthew/Music".to_owned(),
+            dest_folder: "/home/matthew/mnt/Internal Storage/Music".to_owned(),
+            exclude: Some(vec![
                 r".*[Ii]nstrument(al)?( ver(.?|sion))?(\)|-|>)?\.[a-zA-Z0-9]+$".to_owned(),
                 r".*[O|o]ff-?[V|v]ocal.*".to_owned(),
             ]),
-        files: vec!["BLACKPINK".to_owned(), "MAMAMOO".to_owned()],
-        convert_profile: ConvertProfile {
-            target_format: "OPUS".to_owned(),
-            acceptable_formats: vec!["quality:lossy".to_owned()],
-        },
-    };
-    assert_eq!(
-        Config::new(Some("config.example.toml")).unwrap(),
-        correct_config
-    )
+            files: vec!["BLACKPINK".to_owned(), "MAMAMOO".to_owned()],
+            convert_profile: ConvertProfile {
+                target_format: "OPUS".to_owned(),
+                acceptable_formats: vec!["quality:lossy".to_owned()],
+                bit_rate: 320,
+            },
+        };
+        assert_eq!(
+            Config::new(Some("config.example.toml")).unwrap(),
+            correct_config
+        )
+    }
 }

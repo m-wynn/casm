@@ -21,7 +21,7 @@ use clap::App;
 use config::Config;
 use glob::glob;
 use musicfile::Musicfile;
-use pbr::{ProgressBar, MultiBar};
+use pbr::ProgressBar;
 use regex::RegexSet;
 use scoped_threadpool::Pool;
 use std::collections::HashSet;
@@ -170,68 +170,73 @@ fn process_files(
     pb.lock().unwrap().finish_print("Pull complete");
 }
 
+#[cfg(test)]
+mod tests {
+    use std::path::PathBuf;
+    use super::{Musicfile, scan_files};
 
-#[test]
-fn test_scan_folder() {
-    let files = vec!["folder1".to_owned()];
-    let musicfiles = scan_files("test-files", files, &None);
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let should_contain = Musicfile { filename: filename };
-    assert_eq!(musicfiles.contains(&should_contain), true);
-    assert_eq!(musicfiles.len(), 1);
-}
+    #[test]
+    fn test_scan_folder() {
+        let files = vec!["folder1".to_owned()];
+        let musicfiles = scan_files("test-files", files, &None);
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let should_contain = Musicfile { filename: filename };
+        assert_eq!(musicfiles.contains(&should_contain), true);
+        assert_eq!(musicfiles.len(), 1);
+    }
 
-#[test]
-fn test_scan_glob() {
-    let files = vec!["folder*/*Crocodile*".to_owned()];
-    let musicfiles = scan_files("test-files", files, &None);
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let should_contain = Musicfile { filename: filename };
-    assert_eq!(musicfiles.contains(&should_contain), true);
-    assert_eq!(musicfiles.len(), 1);
-}
+    #[test]
+    fn test_scan_glob() {
+        let files = vec!["folder*/*Crocodile*".to_owned()];
+        let musicfiles = scan_files("test-files", files, &None);
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let should_contain = Musicfile { filename: filename };
+        assert_eq!(musicfiles.contains(&should_contain), true);
+        assert_eq!(musicfiles.len(), 1);
+    }
 
-#[test]
-fn test_scan_filename() {
-    let files = vec!["/folder1/How Doth The Little Crocodile.mp3".to_owned()];
-    let musicfiles = scan_files("test-files/", files, &None);
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let should_contain = Musicfile { filename: filename };
-    assert_eq!(musicfiles.contains(&should_contain), true);
-    assert_eq!(musicfiles.len(), 1);
-}
+    #[test]
+    fn test_scan_filename() {
+        let files = vec!["/folder1/How Doth The Little Crocodile.mp3".to_owned()];
+        let musicfiles = scan_files("test-files/", files, &None);
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let should_contain = Musicfile { filename: filename };
+        assert_eq!(musicfiles.contains(&should_contain), true);
+        assert_eq!(musicfiles.len(), 1);
+    }
 
-#[test]
-fn test_scan_empty() {
-    let files = vec!["folder1/*.txt".to_owned()];
-    let musicfiles = scan_files("test-files", files, &None);
-    assert_eq!(musicfiles.is_empty(), true);
-}
+    #[test]
+    fn test_scan_empty() {
+        let files = vec!["folder1/*.txt".to_owned()];
+        let musicfiles = scan_files("test-files", files, &None);
+        assert_eq!(musicfiles.is_empty(), true);
+    }
 
-#[test]
-fn test_scan_nonexistant() {
-    let files = vec!["not_a_folder".to_owned()];
-    let musicfiles = scan_files("test-files", files, &None);
-    assert_eq!(musicfiles.is_empty(), true);
-}
+    #[test]
+    fn test_scan_nonexistant() {
+        let files = vec!["not_a_folder".to_owned()];
+        let musicfiles = scan_files("test-files", files, &None);
+        assert_eq!(musicfiles.is_empty(), true);
+    }
 
-#[test]
-fn test_scan_text_file() {
-    let files = vec!["folder2/notmusic.txt".to_owned()];
-    let musicfiles = scan_files("test-files", files, &None);
-    assert_eq!(musicfiles.is_empty(), true);
-}
+    #[test]
+    fn test_scan_text_file() {
+        let files = vec!["folder2/notmusic.txt".to_owned()];
+        let musicfiles = scan_files("test-files", files, &None);
+        assert_eq!(musicfiles.is_empty(), true);
+    }
 
-#[test]
-fn test_scan_duplicates() {
-    let files = vec![
-        "folder1/How Doth The Little Crocodile.mp3".to_owned(),
-        "folder1/".to_owned(),
-        "folder1/*".to_owned(),
-    ];
-    let musicfiles = scan_files("test-files", files, &None);
-    let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
-    let should_contain = Musicfile { filename: filename };
-    assert_eq!(musicfiles.contains(&should_contain), true);
-    assert_eq!(musicfiles.len(), 1);
+    #[test]
+    fn test_scan_duplicates() {
+        let files = vec![
+            "folder1/How Doth The Little Crocodile.mp3".to_owned(),
+            "folder1/".to_owned(),
+            "folder1/*".to_owned(),
+        ];
+        let musicfiles = scan_files("test-files", files, &None);
+        let filename = PathBuf::from("test-files/folder1/How Doth The Little Crocodile.mp3");
+        let should_contain = Musicfile { filename: filename };
+        assert_eq!(musicfiles.contains(&should_contain), true);
+        assert_eq!(musicfiles.len(), 1);
+    }
 }
