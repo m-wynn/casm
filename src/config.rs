@@ -6,29 +6,48 @@ use toml;
 pub use errors::*;
 
 #[derive(Deserialize, Debug, PartialEq)]
+/// The user-specified config
 pub struct Config {
+    /// The source folder that all files are relative to (i.e. `~/Music/`)
     pub source_folder: String,
+    /// The dest folder to which all relative filenames will be appended (i.e.
+    /// `/mnt/Internal_Storage/Music`)
     pub dest_folder: String,
+    /// The regex that matches files to exclude, usually for instrumental tracks
     pub exclude: Option<Vec<String>>,
+    /// A list of files, folders, and glob patterns to convert (this will be unique'd later)
     pub files: Vec<String>,
+    /// Conversion-specific settings
     pub convert_profile: ConvertProfile,
 }
 
 // Conversion options
 #[derive(Deserialize, Debug, PartialEq)]
+/// The conversion-specific parts of the user-specified config
 pub struct ConvertProfile {
+    /// A `ffmpeg::codec::id::Id` that is supported (see gen_codec_types).  Files that are not
+    /// already one of `acceptable_formats` will be converted to this format.
     pub target_format: String,
+    /// A list of music types that are acceptable on the target.  If the source file is one of
+    /// these, it will not be converted to target_format.  The list may include types:
+    /// * `ffmpeg::codec::id::Id`s that are supported (see gen_codec_types)
+    /// * `lossless` for all lossless files (not recommended, unless also combined with lossy)
+    /// * `lossy` for all lossy files (recommended)
+    /// I usually go with `lossy` here, so that I'm not converting between lossy formats (more
+    /// loss!) but don't have giant lossy files on my phone.
     pub acceptable_formats: Vec<String>,
+    /// A target bit rate in KB/s (i.e. 320 or 128)
     pub bit_rate: usize,
 }
 
 
 impl Config {
-    /// Creates a config struct
+    /// Creates a config struct from the configuration file
     ///
     /// # Arguments
     ///
-    /// * `config_cli` - An Option that may hold the location of the configuration file
+    /// * `config_cli` - An Option that may hold the location of the configuration file.
+    /// Otherwise, the xdg location will be used.
     pub fn new(config_cli: Option<&str>) -> Result<Config> {
         let config_file = match config_cli {
             Some(file) => PathBuf::from(file),

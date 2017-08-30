@@ -13,11 +13,18 @@ use transcoder;
 use unicase::UniCase;
 
 #[derive(Debug, Eq, PartialEq, Hash)]
+/// A struct that holds a music file
 pub struct Musicfile {
     pub filename: PathBuf,
 }
 
 impl Musicfile {
+    /// Creates a new Musicfile, if it doesn't match the `exclude` regex
+    ///
+    /// # Arguments
+    ///
+    /// * `filename` - The relative path of the music file
+    /// * `exclude` - A regex to exclude
     pub fn new(filename: PathBuf, exclude: &Option<RegexSet>) -> Option<Musicfile> {
         if mime_guess::guess_mime_type(&filename).type_() == "audio" {
             if let Some(ref exclude) = *exclude {
@@ -30,6 +37,14 @@ impl Musicfile {
         None
     }
 
+    /// Analyzes the music file to determine whether or not it needs to be converted, and then
+    /// converts and/or copies it
+    ///
+    /// # Arguments
+    ///
+    /// * `src` - The path to which `filename` is relative.
+    /// * `dest` - The path that the relative `filename` will be copied into
+    /// * `convert_profile` - Conversion settings
     pub fn process_file(
         &self,
         src: &str,
@@ -77,6 +92,7 @@ impl Musicfile {
         Ok(())
     }
 
+    /// Gets the codec from the music file via ffmpeg
     fn get_codec(&self) -> Option<codec::id::Id> {
         #[allow(unused)]
         let _gag_stderr = Gag::stderr().unwrap();
@@ -93,6 +109,12 @@ impl Musicfile {
         }
     }
 
+    /// Determines whether or not a file at the destination should be overwritten.
+    ///
+    /// # Arguments
+    ///
+    /// * `dest` - The musicfile's destination, which may or may not contain a file which would be
+    /// overwritten by the conversion and copying process
     fn should_write(&self, dest: &PathBuf) -> bool {
         //TODO: Compare timestamps
         !dest.exists()

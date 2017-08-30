@@ -1,5 +1,6 @@
 extern crate ffmpeg;
 
+use std::iter::FromIterator;
 use std::path::Path;
 
 use ffmpeg::{format, codec, frame, media, filter};
@@ -90,7 +91,7 @@ fn transcoder<P: AsRef<Path>>(
         encoder.set_flags(ffmpeg::codec::flag::GLOBAL_HEADER);
     }
 
-    encoder.set_rate(decoder.rate() as i32);
+    encoder.set_rate(select_best_rate(decoder.rate() as i32, codec.rates()));
     encoder.set_channel_layout(channel_layout);
     encoder.set_channels(channel_layout.channels());
     encoder.set_format(
@@ -190,4 +191,64 @@ pub fn convert(input: &str, output: &str, filter: &str, bit_rate: usize) {
     }
 
     octx.write_trailer().unwrap();
+}
+
+/// Get the closest sample rate without going under, unless there is nothing above
+/// There are some issues with this.  Sample rate conversion can have some loss, and
+/// we're letting the user target a bitrate.  That said, we're mostly doing this to
+/// convert from 44.1khz to 48khz for opus.
+/// This isn't as fast as it could be, but that's ok.  The vectors will be small (<=10).
+///
+/// # Arguments
+///
+/// * `source` - The sample rate of the source file
+/// * `supported` - The supported sample rates of the target codec
+fn select_best_rate(source: i32, supported: Option<codec::audio::RateIter>) -> i32 {
+    let mut best_rate = source;
+    if let Some(rates) = supported {
+        // rates is not always sorted. ie. [44100, 48000, 88200, 96000, 176400, 192000, 0]
+        let mut rates = Vec::from_iter(rates);
+        rates.sort();
+        for rate in rates {
+            // If codec doesn't support our rate, get the next highest
+            if rate > 0 && rate < source {
+                best_rate = rate;
+            } else if rate >= source {
+                return rate;
+            }
+        }
+
+    }
+    best_rate
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::select_best_rate;
+    use ffmpeg::codec::audio::RateIter;
+
+    #[test]
+    fn test_best_rate_above() {
+        let supported_array: [i32; 6] = [48000, 24000, 16000, 12000, 8000, 0];
+        let supported = RateIter::new(&supported_array as *const i32);
+        let source: i32 = 41000;
+        assert_eq!(select_best_rate(source, Some(supported)), 48000);
+    }
+
+    #[test]
+    fn test_best_rate_below() {
+        let supported_array: [i32; 5] = [24000, 16000, 12000, 8000, 0];
+        let supported = RateIter::new(&supported_array as *const i32);
+        let source: i32 = 41000;
+        assert_eq!(select_best_rate(source, Some(supported)), 24000);
+    }
+
+    #[test]
+    fn test_best_rate_equal() {
+        let supported_array: [i32; 7] = [48000, 41000, 24000, 16000, 12000, 8000, 0];
+        let supported = RateIter::new(&supported_array as *const i32);
+        let source: i32 = 41000;
+        assert_eq!(select_best_rate(source, Some(supported)), 41000);
+    }
 }

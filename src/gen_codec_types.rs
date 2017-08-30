@@ -19,6 +19,7 @@ fn main() {
     build_map(&mut outfile);
 }
 
+/// Write out the `perfect hash function` to a new file.
 fn build_map<W: Write>(out: &mut W) {
     write!(
         out,
@@ -46,6 +47,7 @@ fn build_map<W: Write>(out: &mut W) {
 
 // I have removed the ffmpeg codecs that will never ever be used (i.e. they existed in one game)
 #[cfg_attr(rustfmt, rustfmt_skip)]
+/// All the codecs that we support.  This is a subset of ones that ffmpeg supports.
 pub static ALL_CODECS: &'static [(&'static str, bool, &'static str)] = &[
     ("AAC",              false, "m4a"  ),
     ("AAC_LATM",         false, "m4a"  ),

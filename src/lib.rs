@@ -45,6 +45,7 @@ pub mod errors {
 
 pub use errors::*;
 
+/// Runs the program
 pub fn run() -> Result<()> {
     let yaml = load_yaml!("cli.yml");
     let matches = App::from_yaml(yaml)
@@ -86,7 +87,7 @@ pub fn run() -> Result<()> {
     Ok(())
 }
 
-/// Creates a vector of files
+/// Creates a unique set of music files from the configuration data.  It expands globs and walks directories
 ///
 /// # Arguments
 ///
@@ -117,7 +118,15 @@ fn scan_files(prefix: &str, files: Vec<String>, exclude: &Option<RegexSet>) -> H
     musicfiles
 }
 
-/// Processes each file
+/// Runs the processing and copying on each file.  This is done in a multithreaded manner and shows
+/// a progressbar.
+///
+/// # Arguments
+///
+/// * `musicfiles` - The hashset to take music files from
+/// * `source_folder` - The folder to take music files from
+/// * `dest_folder` - The folder to put processed music files in
+/// * `convert_profile` - Conversion settings
 fn process_files(
     musicfiles: HashSet<Musicfile>,
     source_folder: &str,
