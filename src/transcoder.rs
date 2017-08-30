@@ -197,6 +197,7 @@ pub fn convert(input: &str, output: &str, filter: &str, bit_rate: usize) {
 /// There are some issues with this.  Sample rate conversion can have some loss, and
 /// we're letting the user target a bitrate.  That said, we're mostly doing this to
 /// convert from 44.1khz to 48khz for opus.
+///
 /// This isn't as fast as it could be, but that's ok.  The vectors will be small (<=10).
 ///
 /// # Arguments

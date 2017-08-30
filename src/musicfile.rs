@@ -5,7 +5,6 @@ pub use errors::*;
 
 use config;
 use ffmpeg::codec;
-use gag::Gag;
 use regex::RegexSet;
 use std::fs;
 use std::path::PathBuf;
@@ -78,24 +77,21 @@ impl Musicfile {
             }
         } else {
             let dest = dest_prefix.with_extension(target_codec.extension);
-            // ffmpeg likes writing things to stderr
-            #[allow(unused)]
-            let _gag_stderr = Gag::stderr().unwrap();
-            ffmpeg::init().unwrap();
-            transcoder::convert(
-                self.filename.to_str().ok_or("Invalid filename")?,
-                dest.to_str().ok_or("Invalid destination")?,
-                "anull",
-                convert_profile.bit_rate * 1024,
-            );
+            if self.should_write(&dest) {
+                ffmpeg::init().unwrap();
+                transcoder::convert(
+                    self.filename.to_str().ok_or("Invalid filename")?,
+                    dest.to_str().ok_or("Invalid destination")?,
+                    "anull",
+                    convert_profile.bit_rate * 1024,
+                );
+            }
         }
         Ok(())
     }
 
     /// Gets the codec from the music file via ffmpeg
     fn get_codec(&self) -> Option<codec::id::Id> {
-        #[allow(unused)]
-        let _gag_stderr = Gag::stderr().unwrap();
         ffmpeg::init().unwrap();
         match ffmpeg::format::input(&self.filename) {
             Ok(context) => {
@@ -116,7 +112,7 @@ impl Musicfile {
     /// * `dest` - The musicfile's destination, which may or may not contain a file which would be
     /// overwritten by the conversion and copying process
     fn should_write(&self, dest: &PathBuf) -> bool {
-        //TODO: Compare timestamps
+        //TODO: Compare timestamps and look for other filenames?
         !dest.exists()
     }
 }

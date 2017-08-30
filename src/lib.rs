@@ -19,6 +19,7 @@ extern crate xdg;
 
 use clap::App;
 use config::Config;
+use gag::Gag;
 use glob::glob;
 use musicfile::Musicfile;
 use pbr::ProgressBar;
@@ -141,6 +142,10 @@ fn process_files(
     pb.show_message = true;
     let pb = Arc::new(Mutex::new(pb));
 
+    // ffmpeg likes writing things to stderr, but we have a progress bar
+    // later on, we'll redirect stuff to a log?
+    let _gag_stderr = Gag::stderr().ok();
+
     pool.scoped(|scope| {
         for file in musicfiles {
             let pb = pb.clone();
@@ -176,7 +181,7 @@ fn process_files(
             });
         }
     });
-    pb.lock().unwrap().finish_print("Pull complete");
+    pb.lock().unwrap().finish_print("Sync Complete");
 }
 
 #[cfg(test)]
