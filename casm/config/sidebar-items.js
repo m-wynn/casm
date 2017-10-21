@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Config",""],["_IMPL_DESERIALIZE_FOR_ConvertProfile",""]],"struct":[["Config","The user-specified config"],["ConvertProfile","The conversion-specific parts of the user-specified config"]]});

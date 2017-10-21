@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ALL_CODECS` static in crate `casm`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ALL_CODECS">
+
+    <title>casm::ALL_CODECS - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc static">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>casm</a></p><script>window.sidebarCurrent = {name: 'ALL_CODECS', ty: 'static', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Static <a href='index.html'>casm</a>::<wbr><a class="static" href=''>ALL_CODECS</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/casm/codecs_generated.rs.html#1-103' title='goto source code'>[src]</a></span></h1>
+<pre class='rust static'>static ALL_CODECS: <a class="struct" href="https://docs.rs/phf/0.7.20/phf/map/struct.Map.html" title="struct phf::map::Map">Map</a>&lt;UniCase&lt;&amp;'static <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;, <a class="struct" href="../casm/codec/struct.Codec.html" title="struct casm::codec::Codec">Codec</a>&gt;<code> = </code><code>::phf::Map{key: 12731061832039563115,
+           disps:
+               ::phf::Slice::Static(&amp;[(0, 2), (2, 0), (2, 0), (5, 62),
+                                      (8, 66), (0, 50), (0, 54), (0, 0),
+                                      (3, 38), (0, 6), (15, 51), (3, 33),
+                                      (0, 13), (18, 63), (10, 63), (78, 67)]),
+           entries:
+               ::phf::Slice::Static(&amp;[(UniCase(&quot;DSD_LSBF&quot;),
+                                       codec::Codec{name: &quot;DSD_LSBF&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;dff&quot;,}),
+                                      (UniCase(&quot;QDM2&quot;),
+                                       codec::Codec{name: &quot;QDM2&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mov&quot;,}),
+                                      (UniCase(&quot;ATRAC3&quot;),
+                                       codec::Codec{name: &quot;ATRAC3&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;at3&quot;,}),
+                                      (UniCase(&quot;TTA&quot;),
+                                       codec::Codec{name: &quot;TTA&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;tta&quot;,}),
+                                      (UniCase(&quot;PCM_F32BE&quot;),
+                                       codec::Codec{name: &quot;PCM_F32BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_U24BE&quot;),
+                                       codec::Codec{name: &quot;PCM_U24BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;DSS_SP&quot;),
+                                       codec::Codec{name: &quot;DSS_SP&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;dss&quot;,}),
+                                      (UniCase(&quot;BINKAUDIO_DCT&quot;),
+                                       codec::Codec{name: &quot;BINKAUDIO_DCT&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;bik&quot;,}),
+                                      (UniCase(&quot;OPUS&quot;),
+                                       codec::Codec{name: &quot;OPUS&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;opus&quot;,}),
+                                      (UniCase(&quot;PCM_S24LE_PLANAR&quot;),
+                                       codec::Codec{name: &quot;PCM_S24LE_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;FLAC&quot;),
+                                       codec::Codec{name: &quot;FLAC&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;flac&quot;,}),
+                                      (UniCase(&quot;MP4ALS&quot;),
+                                       codec::Codec{name: &quot;MP4ALS&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;m4a&quot;,}),
+                                      (UniCase(&quot;IAC&quot;),
+                                       codec::Codec{name: &quot;IAC&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;avi&quot;,}),
+                                      (UniCase(&quot;PCM_S16BE&quot;),
+                                       codec::Codec{name: &quot;PCM_S16BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;TAK&quot;),
+                                       codec::Codec{name: &quot;TAK&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;tak&quot;,}),
+                                      (UniCase(&quot;DSD_LSBF_PLANAR&quot;),
+                                       codec::Codec{name: &quot;DSD_LSBF_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;dff&quot;,}),
+                                      (UniCase(&quot;PCM_S8_PLANAR&quot;),
+                                       codec::Codec{name: &quot;PCM_S8_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MUSEPACK7&quot;),
+                                       codec::Codec{name: &quot;MUSEPACK7&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mpc&quot;,}),
+                                      (UniCase(&quot;MP3&quot;),
+                                       codec::Codec{name: &quot;MP3&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mp3&quot;,}),
+                                      (UniCase(&quot;PCM_S16BE_PLANAR&quot;),
+                                       codec::Codec{name: &quot;PCM_S16BE_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_S24LE&quot;),
+                                       codec::Codec{name: &quot;PCM_S24LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;SHORTEN&quot;),
+                                       codec::Codec{name: &quot;SHORTEN&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;shn&quot;,}),
+                                      (UniCase(&quot;PCM_LXF&quot;),
+                                       codec::Codec{name: &quot;PCM_LXF&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;AAC&quot;),
+                                       codec::Codec{name: &quot;AAC&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;m4a&quot;,}),
+                                      (UniCase(&quot;COOK&quot;),
+                                       codec::Codec{name: &quot;COOK&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;rm&quot;,}),
+                                      (UniCase(&quot;PCM_F64LE&quot;),
+                                       codec::Codec{name: &quot;PCM_F64LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;WMALOSSLESS&quot;),
+                                       codec::Codec{name: &quot;WMALOSSLESS&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wma&quot;,}),
+                                      (UniCase(&quot;VORBIS&quot;),
+                                       codec::Codec{name: &quot;VORBIS&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;ogg&quot;,}),
+                                      (UniCase(&quot;APE&quot;),
+                                       codec::Codec{name: &quot;APE&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;ape&quot;,}),
+                                      (UniCase(&quot;SIPR&quot;),
+                                       codec::Codec{name: &quot;SIPR&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;rm&quot;,}),
+                                      (UniCase(&quot;PCM_S16LE_PLANAR&quot;),
+                                       codec::Codec{name: &quot;PCM_S16LE_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;QCELP&quot;),
+                                       codec::Codec{name: &quot;QCELP&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;qcp&quot;,}),
+                                      (UniCase(&quot;PCM_F64BE&quot;),
+                                       codec::Codec{name: &quot;PCM_F64BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_ZORK&quot;),
+                                       codec::Codec{name: &quot;PCM_ZORK&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;ALAC&quot;),
+                                       codec::Codec{name: &quot;ALAC&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;m4a&quot;,}),
+                                      (UniCase(&quot;PCM_MULAW&quot;),
+                                       codec::Codec{name: &quot;PCM_MULAW&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MP1&quot;),
+                                       codec::Codec{name: &quot;MP1&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mp1&quot;,}),
+                                      (UniCase(&quot;PCM_S24DAUD&quot;),
+                                       codec::Codec{name: &quot;PCM_S24DAUD&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_S16LE&quot;),
+                                       codec::Codec{name: &quot;PCM_S16LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MUSEPACK8&quot;),
+                                       codec::Codec{name: &quot;MUSEPACK8&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mpc&quot;,}),
+                                      (UniCase(&quot;WAVPACK&quot;),
+                                       codec::Codec{name: &quot;WAVPACK&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;.wv&quot;,}),
+                                      (UniCase(&quot;S302M&quot;),
+                                       codec::Codec{name: &quot;S302M&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_DVD&quot;),
+                                       codec::Codec{name: &quot;PCM_DVD&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_U16LE&quot;),
+                                       codec::Codec{name: &quot;PCM_U16LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_ALAW&quot;),
+                                       codec::Codec{name: &quot;PCM_ALAW&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;DSD_MSBF_PLANAR&quot;),
+                                       codec::Codec{name: &quot;DSD_MSBF_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;dff&quot;,}),
+                                      (UniCase(&quot;PCM_BLURAY&quot;),
+                                       codec::Codec{name: &quot;PCM_BLURAY&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MP3ON4&quot;),
+                                       codec::Codec{name: &quot;MP3ON4&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mp3&quot;,}),
+                                      (UniCase(&quot;SPEEX&quot;),
+                                       codec::Codec{name: &quot;SPEEX&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;spx&quot;,}),
+                                      (UniCase(&quot;IMC&quot;),
+                                       codec::Codec{name: &quot;IMC&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;avi&quot;,}),
+                                      (UniCase(&quot;PCM_S8&quot;),
+                                       codec::Codec{name: &quot;PCM_S8&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_U32BE&quot;),
+                                       codec::Codec{name: &quot;PCM_U32BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MP2&quot;),
+                                       codec::Codec{name: &quot;MP2&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mp2&quot;,}),
+                                      (UniCase(&quot;AAC_LATM&quot;),
+                                       codec::Codec{name: &quot;AAC_LATM&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;m4a&quot;,}),
+                                      (UniCase(&quot;TWINVQ&quot;),
+                                       codec::Codec{name: &quot;TWINVQ&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;vqf&quot;,}),
+                                      (UniCase(&quot;EAC3&quot;),
+                                       codec::Codec{name: &quot;EAC3&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;eac3&quot;,}),
+                                      (UniCase(&quot;RALF&quot;),
+                                       codec::Codec{name: &quot;RALF&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;rmvb&quot;,}),
+                                      (UniCase(&quot;PCM_S32LE_PLANAR&quot;),
+                                       codec::Codec{name: &quot;PCM_S32LE_PLANAR&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;AC3&quot;),
+                                       codec::Codec{name: &quot;AC3&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;ac3&quot;,}),
+                                      (UniCase(&quot;ATRAC1&quot;),
+                                       codec::Codec{name: &quot;ATRAC1&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;aea&quot;,}),
+                                      (UniCase(&quot;DTS&quot;),
+                                       codec::Codec{name: &quot;DTS&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;dts&quot;,}),
+                                      (UniCase(&quot;ATRAC3P&quot;),
+                                       codec::Codec{name: &quot;ATRAC3P&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;aa3&quot;,}),
+                                      (UniCase(&quot;DSD_MSBF&quot;),
+                                       codec::Codec{name: &quot;DSD_MSBF&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;dff&quot;,}),
+                                      (UniCase(&quot;BINKAUDIO_RDFT&quot;),
+                                       codec::Codec{name: &quot;BINKAUDIO_RDFT&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;bik&quot;,}),
+                                      (UniCase(&quot;QDMC&quot;),
+                                       codec::Codec{name: &quot;QDMC&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mov&quot;,}),
+                                      (UniCase(&quot;PCM_F32LE&quot;),
+                                       codec::Codec{name: &quot;PCM_F32LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;WMAPRO&quot;),
+                                       codec::Codec{name: &quot;WMAPRO&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;wma&quot;,}),
+                                      (UniCase(&quot;CELT&quot;),
+                                       codec::Codec{name: &quot;CELT&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;ogg&quot;,}),
+                                      (UniCase(&quot;WMAV1&quot;),
+                                       codec::Codec{name: &quot;WMAV1&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;wma&quot;,}),
+                                      (UniCase(&quot;PCM_S24BE&quot;),
+                                       codec::Codec{name: &quot;PCM_S24BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_S32LE&quot;),
+                                       codec::Codec{name: &quot;PCM_S32LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_U24LE&quot;),
+                                       codec::Codec{name: &quot;PCM_U24LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MLP&quot;),
+                                       codec::Codec{name: &quot;MLP&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;mlp&quot;,}),
+                                      (UniCase(&quot;WMAVOICE&quot;),
+                                       codec::Codec{name: &quot;WMAVOICE&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;wma&quot;,}),
+                                      (UniCase(&quot;PCM_S32BE&quot;),
+                                       codec::Codec{name: &quot;PCM_S32BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;MP3ADU&quot;),
+                                       codec::Codec{name: &quot;MP3ADU&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;mp3&quot;,}),
+                                      (UniCase(&quot;PCM_U16BE&quot;),
+                                       codec::Codec{name: &quot;PCM_U16BE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_U8&quot;),
+                                       codec::Codec{name: &quot;PCM_U8&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;PCM_U32LE&quot;),
+                                       codec::Codec{name: &quot;PCM_U32LE&quot;,
+                                                    lossless: true,
+                                                    extension: &quot;wav&quot;,}),
+                                      (UniCase(&quot;WMAV2&quot;),
+                                       codec::Codec{name: &quot;WMAV2&quot;,
+                                                    lossless: false,
+                                                    extension: &quot;wma&quot;,})]),}</code></pre></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "casm";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

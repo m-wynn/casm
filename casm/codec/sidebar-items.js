@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Codec","A codec type for storing basic metadata used for conversion later."]]});
